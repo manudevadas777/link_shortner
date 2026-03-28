@@ -12,8 +12,9 @@ export default function Protected() {
     e.preventDefault();
     setLoading(true);
     try {
-      // Redirect to the backend short URL with password query param
-      const backendBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+      const backendBase = import.meta.env.VITE_API_URL
+        ? import.meta.env.VITE_API_URL.replace('/api', '')
+        : 'http://localhost:4000';
       window.location.href = `${backendBase}/${shortCode}?pw=${encodeURIComponent(password)}`;
     } catch {
       toast.error('Incorrect password');
