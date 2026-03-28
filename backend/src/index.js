@@ -12,21 +12,11 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // --- Middleware ---
-const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map(o => o.trim())
-  : [];
-
+// JWT is in Authorization header (not cookies), so open CORS is safe
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow non-browser requests (Postman, curl, server-to-server)
-    if (!origin) return callback(null, true);
-    // Allow if list is empty (dev) or origin is in the list
-    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 
