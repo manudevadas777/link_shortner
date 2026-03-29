@@ -35,90 +35,6 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-// ── AI Insights Panel ─────────────────────────────────────────────
-function AIInsightsPanel({ linkId }) {
-  const [insights, setInsights] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  const fetch = async () => {
-    setLoading(true);
-    try {
-      const { data } = await api.get(`/analytics/${linkId}/ai`);
-      setInsights(data);
-      setLoaded(true);
-    } catch {
-      toast.error('AI insights unavailable. Check your API key.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const riskColor = { low: 'badge-green', medium: 'badge-yellow', high: 'badge-red' };
-
-  if (!loaded) return (
-    <div className="glass-card p-6 border border-accent-500/20">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-accent-500/20 border border-accent-500/30 flex items-center justify-center text-sm">🤖</div>
-        <div>
-          <h3 className="font-semibold text-white text-sm">AI Insights</h3>
-          <p className="text-xs text-white/30">Powered by Claude</p>
-        </div>
-      </div>
-      <p className="text-sm text-white/40 mb-4">Get plain-English performance analysis, actionable recommendations, and spam detection from Claude AI.</p>
-      <button id="get-ai-insights" onClick={fetch} disabled={loading} className="btn-primary text-sm">
-        {loading ? <><span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> Analyzing…</> : '✨ Generate AI Insights'}
-      </button>
-    </div>
-  );
-
-  return (
-    <div className="glass-card p-6 border border-accent-500/20 animate-fade-in">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-accent-500/20 border border-accent-500/30 flex items-center justify-center text-sm">🤖</div>
-          <div>
-            <h3 className="font-semibold text-white text-sm">AI Insights</h3>
-            <p className="text-xs text-white/30">Powered by Claude</p>
-          </div>
-        </div>
-        {insights?.botRisk && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-white/30">Bot Risk</span>
-            <span className={riskColor[insights.botRisk] || 'badge-blue'}>{insights.botRisk}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Summary */}
-      <div className="bg-accent-500/5 border border-accent-500/10 rounded-xl p-4 mb-4">
-        <p className="text-sm text-white/70 leading-relaxed">{insights.summary}</p>
-      </div>
-
-      {/* Recommendations */}
-      <div className="mb-4">
-        <p className="section-title">Recommendations</p>
-        <div className="space-y-2">
-          {insights.recommendations?.map((r, i) => (
-            <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <span className="w-5 h-5 rounded-full bg-brand-500/20 text-brand-400 text-xs flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-              <p className="text-sm text-white/60">{r}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Hidden Insight */}
-      <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
-        <p className="text-xs text-amber-400 font-semibold mb-1">💡 Hidden Insight</p>
-        <p className="text-sm text-white/60">{insights.hiddenInsight}</p>
-      </div>
-
-      <button onClick={fetch} className="btn-ghost text-xs text-white/30 mt-4">↻ Refresh analysis</button>
-    </div>
-  );
-}
-
 // ── Analytics Page ────────────────────────────────────────────────
 export default function Analytics() {
   const { id } = useParams();
@@ -294,10 +210,8 @@ export default function Analytics() {
             </div>
           </div>
 
-          {/* Right column — AI Insights */}
+          {/* Right column */}
           <div className="space-y-4">
-            <AIInsightsPanel linkId={id} />
-
             {/* OS Breakdown */}
             <div className="glass-card p-5">
               <p className="section-title">Operating Systems</p>
