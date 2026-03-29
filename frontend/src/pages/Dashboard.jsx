@@ -85,7 +85,7 @@ function CreateLinkForm({ onCreated }) {
       <div className="flex items-center gap-3 mb-5">
         <div className="w-8 h-8 rounded-lg bg-brand-500/20 border border-brand-500/30 flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a8ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </div>
         <h2 className="font-semibold text-white">Create Short Link</h2>
@@ -103,7 +103,7 @@ function CreateLinkForm({ onCreated }) {
         <button type="button" onClick={() => setExpanded(!expanded)} className="text-xs text-white/30 hover:text-white/60 flex items-center gap-1 transition-colors">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-            <polyline points="6 9 12 15 18 9"/>
+            <polyline points="6 9 12 15 18 9" />
           </svg>
           Advanced options
         </button>
@@ -143,6 +143,7 @@ function CreateLinkForm({ onCreated }) {
 }
 
 // ── Link Card ────────────────────────────────────────────────────────
+// ── Link Card ────────────────────────────────────────────────────────
 function LinkCard({ link, onDelete, onQR }) {
   const [copied, setCopied] = useState(false);
 
@@ -164,7 +165,15 @@ function LinkCard({ link, onDelete, onQR }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="font-mono text-brand-400 text-sm font-semibold">{link.shortUrl.replace(/^https?:\/\//, '')}</span>
+            {/* ✅ Clickable short URL — opens in new tab */}
+            <a
+              href={link.shortUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-brand-400 text-sm font-semibold hover:text-brand-300 hover:underline transition-colors"
+            >
+              {link.shortUrl.replace(/^https?:\/\//, '')}
+            </a>
             {link.tag && <span className={tagColors[link.tag] || 'badge-blue'}>{link.tag}</span>}
             {link.expiresAt && <span className="badge-yellow">⏱ Expires {new Date(link.expiresAt).toLocaleDateString()}</span>}
             {link.password && <span className="badge-purple">🔒 Protected</span>}
@@ -180,6 +189,15 @@ function LinkCard({ link, onDelete, onQR }) {
         <button onClick={copy} id={`copy-${link.id}`} className="btn-secondary text-xs px-3 py-1.5">
           {copied ? '✓ Copied!' : 'Copy Link'}
         </button>
+        {/* ✅ Also a direct open button */}
+        <a
+          href={link.shortUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-secondary text-xs px-3 py-1.5"
+        >
+          🔗 Open Link
+        </a>
         <Link to={`/analytics/${link.id}`} id={`analytics-${link.id}`} className="btn-secondary text-xs px-3 py-1.5">
           📊 Analytics
         </Link>
@@ -193,7 +211,6 @@ function LinkCard({ link, onDelete, onQR }) {
     </div>
   );
 }
-
 // ── Dashboard ────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user, logout } = useAuth();
