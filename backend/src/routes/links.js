@@ -12,8 +12,14 @@ const prisma = new PrismaClient();
 // POST /api/links — Create a new short link
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { originalUrl, customAlias, password, expiresAt, useAI } = req.body;
-    if (!originalUrl) return res.status(400).json({ error: 'originalUrl is required.' });
+    const { originalUrl: rawUrl, customAlias, password, expiresAt, useAI } = req.body;
+    if (!rawUrl) return res.status(400).json({ error: 'originalUrl is required.' });
+
+    // Normalize URL — ensure it has a protocol
+    let originalUrl = rawUrl.trim();
+    if (!/^https?:\/\//i.test(originalUrl)) {
+      originalUrl = 'https://' + originalUrl;
+    }
 
     // Validate URL
     try { new URL(originalUrl); } catch {

@@ -80,7 +80,12 @@ app.get('/:shortCode', async (req, res) => {
     prisma.click.create({ data: { linkId: link.id, ...clickData } })
       .catch(err => console.error('Click log error:', err));
 
-    return res.redirect(302, link.originalUrl);
+    // Normalize URL to ensure it has a protocol (safety net for old links)
+    let redirectUrl = link.originalUrl;
+    if (!/^https?:\/\//i.test(redirectUrl)) {
+      redirectUrl = 'https://' + redirectUrl;
+    }
+    return res.redirect(302, redirectUrl);
   } catch (err) {
     console.error('Redirect error:', err);
     return res.status(500).send('Server error');
